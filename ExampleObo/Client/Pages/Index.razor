@@ -1,0 +1,34 @@
+﻿@page "/"
+@using System.Security.Claims
+
+<PageTitle>Index</PageTitle>
+
+<h1>Hello!</h1>
+
+<hr />
+
+@if (User == null)
+{
+    <p>Click here to login</p>
+    <button type="button" class="btn btn-primary" @onclick="OnLoginClick">Login</button>
+}
+else
+{
+    <p>Email: @User.FindFirst(ClaimTypes.Email).Value</p>
+    <p>UTID: @User.FindFirst("utid").Value</p>
+    <p>UID: @User.FindFirst("uid").Value</p>
+    <hr />
+    <p>Get Confidential Application Token in Behalf of User</p>
+    @if (Result != null)
+    {
+        @if (Result.Success)
+        {
+            <p class="text-success">@Result.Message</p>
+        }
+        else
+        {
+            <p class="text-danger">@Result.Message</p>
+        }
+    }
+    <button type="button" class="btn btn-primary" @onclick="OnGetTokenClick">Get Token</button>
+}
