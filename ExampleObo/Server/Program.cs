@@ -22,6 +22,7 @@ namespace ExampleObo
 
             var configuration = builder.Configuration;
             var scopes = new List<string>(configuration["AzureAd:Scopes"].Split(new char[] { ' ' }));
+
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -40,7 +41,7 @@ namespace ExampleObo
                 })
                 .AddMicrosoftIdentityWebApp(options => { configuration.Bind("AzureAd", options); options.SaveTokens = true; })
                 .EnableTokenAcquisitionToCallDownstreamApi(scopes)
-                .AddInMemoryTokenCaches();
+                .AddInMemoryTokenCaches();            
 
             var app = builder.Build();
 

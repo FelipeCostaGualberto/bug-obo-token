@@ -5,6 +5,7 @@ public class UserModel
     public string Email { get; set; }
     public string Utid { get; set; }
     public string Uid { get; set; }
+    public string CustomClaim { get; set; }
 
     public static string Base64Encode(string plainText)
     {

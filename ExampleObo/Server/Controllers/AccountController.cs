@@ -11,7 +11,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Http;
-using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using ExampleObo.Shared;
 using Newtonsoft.Json;
@@ -31,12 +30,6 @@ public class AccountController : ControllerBase
     )
     {
         _configuration = configuration;
-    }
-
-    [HttpGet]
-    public string Ping()
-    {
-        return "Ping!";
     }
 
     [HttpGet]
@@ -79,22 +72,17 @@ public class AccountController : ControllerBase
         }
     }
 
-    public List<Claim> GetClaims(UserModel user)
+    [Route("{userSerial}")]
+    public string GetToken(string userSerial)
     {
+        var user = JsonConvert.DeserializeObject<UserModel>(UserModel.Base64Decode(userSerial));
         var claimList = new List<Claim>
         {
             new Claim(ClaimTypes.Email, user.Email),
             new Claim("utid", user.Utid),
             new Claim("uid", user.Uid),
+            new Claim("custom", "This is a custom value"),
         };
-        return claimList;
-    }
-
-    [Route("{userSerial}")]
-    public string GetToken(string userSerial)
-    {
-        var user = JsonConvert.DeserializeObject<UserModel>(UserModel.Base64Decode(userSerial));
-        var claimList = GetClaims(user);
         var token = CreateToken(claimList);
         return token;
     }
@@ -112,15 +100,5 @@ public class AccountController : ControllerBase
         var token = tokenHandler.CreateToken(tokenDescriptor);
         var tokenValue = tokenHandler.WriteToken(token);
         return tokenValue;
-    }
-
-    public async Task Logout()
-    {
-        var prop = new AuthenticationProperties()
-        {
-            RedirectUri = "/"
-        };
-        await HttpContext.SignOutAsync("Cookies");
-        await HttpContext.SignOutAsync("OpenIdConnect", prop);
     }
 }

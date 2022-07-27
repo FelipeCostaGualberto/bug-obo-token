@@ -31,6 +31,8 @@ public partial class App : ComponentBase
         }
 
         await LocalStorage.SetItemAsStringAsync("authToken", token);
+        Navigation.NavigateTo("/");
+
         Initialized = true;
     }
 }

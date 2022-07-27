@@ -18,17 +18,31 @@ else
     <p>UTID: @User.FindFirst("utid").Value</p>
     <p>UID: @User.FindFirst("uid").Value</p>
     <hr />
-    <p>Get Confidential Application Token in Behalf of User</p>
-    @if (Result != null)
+    <p>Get Token in Behalf of User</p>
+    @if (TokenResult != null)
     {
-        @if (Result.Success)
+        @if (TokenResult.Success)
         {
-            <p class="text-success">@Result.Message</p>
+            <p class="text-success">@TokenResult.Message</p>
         }
         else
         {
-            <p class="text-danger">@Result.Message</p>
+            <p class="text-danger">@TokenResult.Message</p>
         }
     }
     <button type="button" class="btn btn-primary" @onclick="OnGetTokenClick">Get Token</button>
+    <hr />
+    <p>Get Custom Claim</p>
+    @if (CustomClaimResult != null)
+    {
+        @if (CustomClaimResult.Success)
+        {
+            <p class="text-success">@CustomClaimResult.Message</p>
+        }
+        else
+        {
+            <p class="text-danger">@CustomClaimResult.Message</p>
+        }
+    }
+    <button type="button" class="btn btn-primary" @onclick="OnGetCustomClaimClick">Get Custom Claim</button>
 }
