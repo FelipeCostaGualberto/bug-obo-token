@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Identity.Web;
@@ -22,7 +21,14 @@ namespace ExampleObo
 
             var configuration = builder.Configuration;
             var scopes = new List<string>(configuration["AzureAd:Scopes"].Split(new char[] { ' ' }));
+            
+            // This must be first
+            builder.Services
+                .AddMicrosoftIdentityWebAppAuthentication(configuration)
+                .EnableTokenAcquisitionToCallDownstreamApi(scopes)
+                .AddInMemoryTokenCaches();
 
+            // Then, register Jwt Authentication
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -38,10 +44,8 @@ namespace ExampleObo
                         ValidateAudience = false,
                         ClockSkew = TimeSpan.Zero,
                     };
-                })
-                .AddMicrosoftIdentityWebApp(options => { configuration.Bind("AzureAd", options); options.SaveTokens = true; })
-                .EnableTokenAcquisitionToCallDownstreamApi(scopes)
-                .AddInMemoryTokenCaches();            
+                });
+
 
             var app = builder.Build();
 
@@ -61,8 +65,8 @@ namespace ExampleObo
             app.UseStaticFiles();
 
             app.UseRouting();
-            app.UseAuthentication(); // I added this
-            app.UseAuthorization();  // I added this
+            app.UseAuthentication(); // don't forget to add this
+            app.UseAuthorization();  // don't forget to add this
 
             app.MapRazorPages();
             app.MapControllers();

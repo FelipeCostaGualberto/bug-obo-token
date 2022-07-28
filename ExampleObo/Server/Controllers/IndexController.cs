@@ -1,10 +1,8 @@
 ﻿using ExampleObo.Shared;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Identity.Client;
 using Microsoft.Identity.Web;
 using System;
 using System.Collections.Generic;
@@ -41,7 +39,7 @@ public class IndexController : ControllerBase
             var customClaimValue = User.FindFirstValue("custom");
             if (customClaimValue != "This is a custom value")
             {
-                if(string.IsNullOrEmpty(customClaimValue)) throw new Exception("The claim 'custom' was not found!");
+                if (string.IsNullOrEmpty(customClaimValue)) throw new Exception("The claim 'custom' was not found!");
                 throw new Exception("The claim 'custom' has an invalid value: " + customClaimValue + ". It as expected: 'This is a custom value'.");
             };
             result.Message = "The claim 'custom' was found and has the correct value!";
@@ -62,7 +60,7 @@ public class IndexController : ControllerBase
         try
         {
             var scopes = new List<string>(_configuration["AzureAd:Scopes"].Split(new char[] { ' ' }));
-            var token = await _tokenAcquisition.GetAccessTokenForUserAsync(scopes);
+            var token = await _tokenAcquisition.GetAccessTokenForUserAsync(scopes, authenticationScheme: OpenIdConnectDefaults.AuthenticationScheme);
             result.Message = token;
             result.Success = true;
         }
